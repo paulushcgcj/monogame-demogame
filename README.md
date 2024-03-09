@@ -25,10 +25,18 @@ git clone https://github.com/paulushcgcj/monogame-demogame.git
 
 ### Running the Application
 
-To run the game, navigate to the project directory in your terminal and run:
+To run the game, you first need to build it.
+
+#### Building the project
 
 ```bash
-dotnet run
+dotnet build ./DemoGame/DemoGame.csproj
+```
+
+#### Build for Windows
+
+```bash
+dotnet publish -c Release r win-x64 p:PublishReadyToRun=false p:TieredCompilation=false --self-contained
 ```
 
 Or, if using Visual Studio, hit `F5` or click on the "Run" button.
