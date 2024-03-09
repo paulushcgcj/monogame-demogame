@@ -6,7 +6,7 @@
            "type": "coreclr",
            "request": "launch",
            "preLaunchTask": "Run on Desktop",
-           "program": "${workspaceFolder}/bin/Debug/net6.0/DemoGame.dll",
+           "program": "${workspaceFolder}/DemoGame/bin/Debug/net6.0/DemoGame.dll",
            "args": [],
            "cwd": "${workspaceFolder}",
            "console": "internalConsole",
