@@ -5,7 +5,7 @@
            "name": "Run DesktopGL platform",
            "type": "coreclr",
            "request": "launch",
-           "preLaunchTask": "Run on Desktop",
+           "preLaunchTask": "Build",
            "program": "${workspaceFolder}/DemoGame/bin/Debug/net6.0/DemoGame.dll",
            "args": [],
            "cwd": "${workspaceFolder}",

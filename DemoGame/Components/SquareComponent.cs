@@ -9,10 +9,16 @@ namespace DemoGame;
 /// </summary>
 public class SquareComponent
 {
+  public string Name { get; private set; }
+  public int SquareWidth { get; private set; }
+  public int SquareHeight { get; private set; }
+  public int SquareBorder { get; private set; }
+  public Rectangle Position { get; private set; }
+  public bool IsClicked { get { return _squareColor == _clickColor; } }
   private Texture2D _squareTexture;
-  public int SquareWidth {get; private set;}
-  public int SquareHeight {get; private set;}
-  public int SquareBorder {get; private set;}
+  private Rectangle _borderRectangle;
+  private Color _squareColor = Color.Black;
+  private Color _clickColor = Color.Red;
 
   /// <summary>
   /// Represents a square component that can be rendered on the screen.
@@ -21,8 +27,12 @@ public class SquareComponent
   /// <param name="width">The width of the square.</param>
   /// <param name="height">The height of the square.</param>
   /// <param name="border">The thickness of the square's border.</param>
+  /// <param name="position">The position of the square on the screen.</param>
+  /// <returns>A new instance of the SquareComponent class.</returns>
+  /// <exception cref="ArgumentNullException">Thrown when the texture is null.</exception>
   public SquareComponent(
     Texture2D texture,
+    Vector2 position,
     int width = 100,
     int height = 100,
     int border = 3
@@ -32,36 +42,48 @@ public class SquareComponent
     SquareWidth = width;
     SquareHeight = height;
     SquareBorder = border;
+
+    Name = $"Square at {position.X}, {position.Y}";
+
+    Position = new Rectangle(
+        (((int)position.X) * SquareWidth) + SquareWidth,
+        (((int)position.Y) * SquareHeight) + SquareHeight,
+        SquareWidth,
+        SquareHeight
+      );
+
+    _borderRectangle = new Rectangle(
+      (((int)position.X) * SquareWidth) + SquareWidth + SquareBorder,
+      (((int)position.Y) * SquareHeight) + SquareHeight + SquareBorder,
+      SquareWidth - (SquareBorder * 2),
+      SquareHeight - (SquareBorder * 2)
+    );
+  }
+
+  public void Clicked()
+  {
+    _squareColor = _clickColor;
+  }
+
+  public void Reset()
+  {
+    _squareColor = Color.Black;
+  }
+
+  public Vector2 GetBoardPosition()
+  {
+    return new Vector2(Position.X / SquareWidth-1, Position.Y / SquareHeight-1);
   }
 
   /// <summary>
   /// Draws a square on the screen.
   /// </summary>
   /// <param name="spriteBatch">The sprite batch used for drawing.</param>
-  /// <param name="position">The position of the square.</param>
-  /// <param name="color">The color of the square.</param>
-  public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color)
+  public void Draw(SpriteBatch spriteBatch)
   {
-    spriteBatch.Draw(
-      _squareTexture, 
-      new Rectangle(
-        (((int)position.X) * SquareWidth) + SquareWidth, 
-        (((int)position.Y) * SquareHeight) + SquareHeight, 
-        SquareWidth, 
-        SquareHeight
-      ),
-      color
-    );
-
-    spriteBatch.Draw(
-      _squareTexture, 
-      new Rectangle(
-        (((int)position.X) * SquareWidth) + SquareWidth + SquareBorder, 
-        (((int)position.Y) * SquareHeight) + SquareHeight + SquareBorder, 
-        SquareWidth - (SquareBorder * 2), 
-        SquareHeight - (SquareBorder * 2)
-      ),
-      Color.CornflowerBlue
-    );
+    // Draw the square that will be used as border
+    spriteBatch.Draw(_squareTexture, Position, _squareColor);
+    // Draw the middle square to fake a transparency effect
+    spriteBatch.Draw(_squareTexture, _borderRectangle, Color.CornflowerBlue);
   }
 }

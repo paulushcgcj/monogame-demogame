@@ -1,47 +1,136 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-      {
-          "label": "Run on Desktop",
-          "command": "dotnet",
-          "type": "process",
-          "args": [
-              "build",
-              "${workspaceFolder}/DemoGame/DemoGame.csproj"
-          ],
-          "problemMatcher": "$msCompile"
-      },
-      {
-        "label": "Publish Windows",
-        "type": "shell",
-        "command": "dotnet",
-        "args": [
-            "publish",
-            "-c",
-            "Release",
-            "-r",
-            "win-x64",
-            "/p:PublishReadyToRun=false",
-            "/p:TieredCompilation=false",
-            "--self-contained"
-        ],
-        "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "Publish Linux",
-      "type": "shell",
-      "command": "dotnet",
-      "args": [
-          "publish",
-          "-c",
-          "Release",
-          "-r",
-          "linux-x64",
-          "/p:PublishReadyToRun=false",
-          "/p:TieredCompilation=false",
-          "--self-contained"
-      ],
-      "problemMatcher": "$msCompile"
-  }
-  ]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/DemoGame/DemoGame.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },        
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "${workspaceFolder}/DemoGameTests/DemoGameTests.csproj",
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=opencover"
+            ],
+            "problemMatcher": "$msCompile",
+            "dependsOn": "Build Test"
+        },
+        {
+            "label": "Publish Windows",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "-c",
+                "Release",
+                "-r",
+                "win-x64",
+                "/p:PublishReadyToRun=false",
+                "/p:TieredCompilation=false",
+                "--self-contained",
+                "${workspaceFolder}/DemoGame/DemoGame.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Publish Linux",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "-c",
+                "Release",
+                "-r",
+                "linux-x64",
+                "/p:PublishReadyToRun=false",
+                "/p:TieredCompilation=false",
+                "--self-contained",
+                "${workspaceFolder}/DemoGame/DemoGame.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Publish MacOS",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "-c",
+                "Release",
+                "-r",
+                "osx-x64",
+                "/p:PublishReadyToRun=false",
+                "/p:TieredCompilation=false",
+                "--self-contained",
+                "${workspaceFolder}/DemoGame/DemoGame.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run Windows",
+            "type": "shell",
+            "command": "${workspaceFolder}/DemoGame/bin/Release/net6.0/win-x64/DemoGame.exe",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Linux",
+            "type": "shell",
+            "command": "${workspaceFolder}/DemoGame/bin/Release/net6.0/linux-x64/DemoGame",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run MacOS",
+            "type": "shell",
+            "command": "${workspaceFolder}/DemoGame/bin/Release/net6.0/osx-x64/DemoGame",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Windows (Debug)",
+            "type": "shell",
+            "command": "${workspaceFolder}/DemoGame/bin/Debug/net6.0/win-x64/DemoGame.exe",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Linux (Debug)",
+            "type": "shell",
+            "command": "${workspaceFolder}/DemoGame/bin/Debug/net6.0/linux-x64/DemoGame",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run MacOS (Debug)",
+            "type": "shell",
+            "command": "${workspaceFolder}/DemoGame/bin/Debug/net6.0/osx-x64/DemoGame",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Test",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/DemoGameTests/DemoGameTests.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build Test",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/DemoGameTests/DemoGameTests.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "dependsOn": "Build"
+        }
+    ]
 }
