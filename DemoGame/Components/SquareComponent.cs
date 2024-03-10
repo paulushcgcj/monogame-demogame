@@ -60,9 +60,9 @@ public class SquareComponent
     );
   }
 
-  public void Clicked()
+  public void Clicked(Color color)
   {
-    _squareColor = _clickColor;
+    _squareColor = color;
   }
 
   public void Reset()

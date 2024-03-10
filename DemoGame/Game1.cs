@@ -92,7 +92,7 @@ public class Game1 : Game
 
                             // Mouse click occurred within the square
                             Console.WriteLine("Mouse clicked within square: " + square.Name + " at position: " + square.GetBoardPosition());
-                            square.Clicked();
+                            square.Clicked( _xPlayer ? Color.Red : Color.Yellow  );
                             
 
 
