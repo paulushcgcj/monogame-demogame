@@ -8,13 +8,22 @@ namespace DemoGame;
 
 public class Game1 : Game
 {
+
+    private enum GameState
+    {
+        Playing,
+        Draw,
+        XWon,
+        OWon,
+        Won
+    }
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private List<SquareComponent> _squares = new();
     private SpriteFont _font;
     private bool _xPlayer = true;
     private MouseState _previousMouseState;
-
     // Game board
     private int[,] _gameBoard = new int[3, 3];
     // Game over flag
@@ -25,6 +34,10 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+        _graphics.PreferredBackBufferWidth = 64 * 5;  // set this value to the desired width
+        _graphics.PreferredBackBufferHeight = 64 * 5; // set this value to the desired height
+        _graphics.ApplyChanges();
     }
 
     protected override void Initialize()
@@ -32,14 +45,10 @@ public class Game1 : Game
 
         base.Initialize();
 
-        int _squareWidth = 100;
-        int _squareHeight = 100;
+        int _squareWidth = 64;
+        int _squareHeight = 64;
 
-        Texture2D _squareTexture = new Texture2D(GraphicsDevice, _squareWidth, _squareHeight);
-        Color[] data = new Color[_squareWidth * _squareHeight];
-        for (int i = 0; i < data.Length; ++i) data[i] = Color.White;
-        _squareTexture.SetData(data);
-
+        Texture2D _squareTexture = Content.Load<Texture2D>("Square");
 
         for (int column = 0; column < 3; column++)
         {
@@ -92,27 +101,27 @@ public class Game1 : Game
 
                             // Mouse click occurred within the square
                             Console.WriteLine("Mouse clicked within square: " + square.Name + " at position: " + square.GetBoardPosition());
-                            square.Clicked( _xPlayer ? Color.Red : Color.Yellow  );
-                            
-
+                            square.Clicked(_xPlayer ? Color.Red : Color.Yellow);
 
                             // Mark the square with the current player's symbol if it's not already marked
                             if (_gameBoard[(int)square.GetBoardPosition().X, (int)square.GetBoardPosition().Y] == 0)
                             {
                                 _gameBoard[(int)square.GetBoardPosition().X, (int)square.GetBoardPosition().Y] = _xPlayer ? 1 : 2;
 
-                                // Check if the current player has won
-                                if (CheckWin(_xPlayer ? 1 : 2))
+                                var gameState = CheckWin(_xPlayer ? 1 : 2);
+                                if (gameState == GameState.Playing)
+                                {
+                                    _xPlayer = !_xPlayer;
+                                }
+                                else if (gameState == GameState.Draw)
                                 {
                                     _gameOver = true;
                                 }
                                 else
                                 {
-                                   _xPlayer = !_xPlayer;
+                                    _gameOver = true;
                                 }
                             }
-
-
 
                             break;
                         }
@@ -137,24 +146,42 @@ public class Game1 : Game
         base.Update(gameTime);
     }
 
-    private bool CheckWin(int player)
+    private GameState CheckWin(int player)
     {
         for (int i = 0; i < 3; i++)
         {
             if ((_gameBoard[i, 0] == player && _gameBoard[i, 1] == player && _gameBoard[i, 2] == player) ||
                 (_gameBoard[0, i] == player && _gameBoard[1, i] == player && _gameBoard[2, i] == player))
             {
-                return true;
+                return player == 1 ? GameState.XWon : GameState.OWon;
             }
         }
 
         if ((_gameBoard[0, 0] == player && _gameBoard[1, 1] == player && _gameBoard[2, 2] == player) ||
             (_gameBoard[0, 2] == player && _gameBoard[1, 1] == player && _gameBoard[2, 0] == player))
         {
-            return true;
+            return player == 1 ? GameState.XWon : GameState.OWon;
         }
 
-        return false;
+        bool isBoardFull = true;
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (_gameBoard[i, j] == 0)
+                {
+                    isBoardFull = false;
+                    break;
+                }
+            }
+        }
+
+        if (isBoardFull)
+        {
+            return GameState.Draw;
+        }
+
+        return GameState.Playing;
     }
 
     protected override void Draw(GameTime gameTime)
@@ -163,11 +190,30 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        if(!_gameOver)
-            _spriteBatch.DrawString(_font, $"{(_xPlayer ? 'X' : 'O')} player turn", new Vector2(10, 10), Color.Black);
+        string text = $"{(_xPlayer ? 'X' : 'O')} player turn";
+
+        if (CheckWin(_xPlayer ? 1 : 2) == GameState.Draw)
+            text = "Draw";
+        else if (CheckWin(_xPlayer ? 1 : 2) == GameState.XWon || CheckWin(_xPlayer ? 1 : 2) == GameState.OWon)
+            text = $"{(_xPlayer ? 'X' : 'O')} Won";
         else
-            _spriteBatch.DrawString(_font, $"Player {(_xPlayer ? 'X' : 'O')} Won", new Vector2(10, 10), Color.Black);
-        
+            text =$"{(_xPlayer ? 'X' : 'O')} player turn";;
+
+        Vector2 textMiddlePoint = _font.MeasureString(text) / 2;
+
+        _spriteBatch.DrawString(
+            _font,
+            text,
+            new Vector2(Window.ClientBounds.Width / 2, 30),
+            Color.Black,
+            0,
+            textMiddlePoint,
+            1.0f,
+            SpriteEffects.None,
+            0.5f
+            );
+
+
         _squares.ForEach(square => square.Draw(_spriteBatch));
         _spriteBatch.End();
 

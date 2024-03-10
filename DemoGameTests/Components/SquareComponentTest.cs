@@ -13,11 +13,12 @@ public class SquareComponentTests
         // Arrange
         var spriteBatch = new Mock<SpriteBatch>();
         var squareTexture = new Mock<Texture2D>();
-        var squareComponent = new SquareComponent(squareTexture.Object);
         var position = new Vector2(10, 10);
+        var squareComponent = new SquareComponent(squareTexture.Object,position);
+        
 
         // Act
-        squareComponent.Draw(spriteBatch.Object, position, Color.White);
+        squareComponent.Draw(spriteBatch.Object);
 
         // Assert
         spriteBatch.Verify(sb => sb.Draw(squareTexture.Object, 
@@ -36,12 +37,12 @@ public class SquareComponentTests
         // Arrange
         var spriteBatch = new Mock<SpriteBatch>();
         var squareTexture = new Mock<Texture2D>();
-        var squareComponent = new SquareComponent(squareTexture.Object);
         var position = new Vector2(10, 10);
+        var squareComponent = new SquareComponent(squareTexture.Object,position);        
         var expectedBorder = squareComponent.SquareBorder;
 
         // Act
-        squareComponent.Draw(spriteBatch.Object, position, Color.White);
+        squareComponent.Draw(spriteBatch.Object);
 
         // Assert
         spriteBatch.Verify(sb => sb.Draw(squareTexture.Object, 
